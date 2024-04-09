@@ -84,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-              'Left to budget',
+              'Left to budget Test',
             ),
             Text(
               '$_income',
