@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "223357936606",
+    "project_id": "dollar-dollar",
+    "storage_bucket": "dollar-dollar.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:223357936606:android:203b0bd7845ce258eb734f",
+        "android_client_info": {
+          "package_name": "com.JonahVeit.dollar_dollar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "223357936606-tod5lmovf9ck8gi9ulvjrd8go5gbnnqq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBy3Y07KFGyyADqLe3LSZay4yoYTMV5ky8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "223357936606-tod5lmovf9ck8gi9ulvjrd8go5gbnnqq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
