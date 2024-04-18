@@ -37,184 +37,220 @@ class _MyHomePageState extends State<MyHomePage> {
             AuthController().signOut();
           },
         ),
-      ),
-      
-      body: Column(
-        children: [
-          SizedBox(height: 10), // Add spacing
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: Colors.yellow[800],
-              borderRadius: BorderRadius.circular(30.0),
+        actions: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(right: 30.0), // Adjust the value as needed
+            child: IconButton(
+              icon: Icon(Icons.restart_alt, size: 30.0,),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Reset Data'),
+                      content: Text('Are you sure you want to reset all data?'),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('Cancel'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: Text('Yes'),
+                          onPressed: () {
+                            // Call the function to reset data here
+                            resetUserData();
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Left to budget:',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView (
+        child: Column(
+            children: [
+              SizedBox(height: 10), // Add spacing
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Colors.yellow[800],
+                  borderRadius: BorderRadius.circular(30.0),
                 ),
-                StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance.collection('users').doc(uid).collection('income').snapshots(),
-                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> incomeSnapshot) {
-                    if (incomeSnapshot.hasError) {
-                      return Text('Something went wrong');
-                    }
-
-                    if (incomeSnapshot.connectionState == ConnectionState.waiting) {
-                      return Text("Loading");
-                    }
-
-                    double totalIncome = 0.0;
-                    for (var doc in incomeSnapshot.data?.docs ?? []) {
-                      totalIncome += doc.data()!['amount'] as double;
-                    }
-
-              return StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance.collection('users').doc(uid).collection('expense').snapshots(),
-                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> expenseSnapshot) {
-                  if (expenseSnapshot.hasError) {
-                    return Text('Something went wrong');
-                  }
-
-                  if (expenseSnapshot.connectionState == ConnectionState.waiting) {
-                    return Text("Loading");
-                  }
-
-                    double totalExpense = 0.0;
-                    for (var doc in expenseSnapshot.data?.docs ?? []) {
-                      totalExpense += doc.data()!['amount'] as double;
-                    }
-                                        
-                    return Text(
-                      '\$${(totalIncome - totalExpense).toStringAsFixed(2)}',
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Left to budget:',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 40,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
-                    );
-                },
-              );
-            },
-          ),
-                
-              ],
-            ),
-          ),
-          SizedBox(height: 20), // Add spacing
-          Container(
-            height: 260,
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: 
-              Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Income', // Header for income section
-                  style: TextStyle(
-                    fontSize: 23,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Divider(), 
-                Expanded(
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance.collection('users').doc(uid).collection('income').snapshots(),
-                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.hasError) {
-                        return Text('Something went wrong');
-                      }
+                    ),
+                    StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance.collection('users').doc(uid).collection('income').snapshots(),
+                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> incomeSnapshot) {
+                        if (incomeSnapshot.hasError) {
+                          return Text('Something went wrong');
+                        }
 
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Text("Loading");
-                      }
-                      return ListView(
-                        
-                        children: snapshot.data?.docs.map((DocumentSnapshot document) {
-                          Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-                          return ListTile(
-                            title: Text(data['name']),
-                            subtitle: Text('\$${data['amount']}'),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () {
-                                document.reference.delete();
-                              },
-                            ),
-                          );
-                        }).toList() ?? [],
-                        
-                      );
-                    },
-                  ),
-                ),
-                
-              ],
-              
-            ),
-            
-          ),
-          Container(
-            height: 260,
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Expenses', // Header for income section
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Divider(), // Add a line under the header
-                Expanded(
-                  child: StreamBuilder<QuerySnapshot>(
+                        if (incomeSnapshot.connectionState == ConnectionState.waiting) {
+                          return Text("Loading");
+                        }
+
+                        double totalIncome = 0.0;
+                        for (var doc in incomeSnapshot.data?.docs ?? []) {
+                          totalIncome += doc.data()!['amount'] as double;
+                        }
+
+                  return StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance.collection('users').doc(uid).collection('expense').snapshots(),
-                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.hasError) {
+                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> expenseSnapshot) {
+                      if (expenseSnapshot.hasError) {
                         return Text('Something went wrong');
                       }
 
-                      if (snapshot.connectionState == ConnectionState.waiting) {
+                      if (expenseSnapshot.connectionState == ConnectionState.waiting) {
                         return Text("Loading");
                       }
-                      return ListView(
-                        
-                        children: snapshot.data?.docs.map((DocumentSnapshot document) {
-                          Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-                          return ListTile(
-                            title: Text(data['name']),
-                            subtitle: Text('\$${data['amount']}'),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () {
-                                document.reference.delete();
-                              },
-                            ),
-                          );
-                        }).toList() ?? [],
-                        
-                      );
+
+                        double totalExpense = 0.0;
+                        for (var doc in expenseSnapshot.data?.docs ?? []) {
+                          totalExpense += doc.data()!['amount'] as double;
+                        }
+                                            
+                        return Text(
+                          '\$${(totalIncome - totalExpense).toStringAsFixed(2)}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
                     },
-                  ),
+                  );
+                },
+              ),
+                    
+                  ],
                 ),
-              ],
+              ),
+              SizedBox(height: 20), // Add spacing
+              Container(
+                height: 260,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: 
+                  Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Income', // Header for income section
+                      style: TextStyle(
+                        fontSize: 23,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Divider(), 
+                    Expanded(
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance.collection('users').doc(uid).collection('income').snapshots(),
+                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Something went wrong');
+                          }
+
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return Text("Loading");
+                          }
+                          return ListView(
+                            
+                            children: snapshot.data?.docs.map((DocumentSnapshot document) {
+                              Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                              return ListTile(
+                                title: Text(data['name']),
+                                subtitle: Text('\$${data['amount']}'),
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () {
+                                    document.reference.delete();
+                                  },
+                                ),
+                              );
+                            }).toList() ?? [],
+                            
+                          );
+                        },
+                      ),
+                    ),
+                    
+                  ],
+                  
+                ),
+                
+              ),
+              Container(
+                height: 260,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Expenses', // Header for income section
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Divider(), // Add a line under the header
+                    Expanded(
+                      child: StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance.collection('users').doc(uid).collection('expense').snapshots(),
+                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Something went wrong');
+                          }
+
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return Text("Loading");
+                          }
+                          return ListView(
+                            
+                            children: snapshot.data?.docs.map((DocumentSnapshot document) {
+                              Map<String, dynamic> data = document.data() as Map<String, dynamic>;
+                              return ListTile(
+                                title: Text(data['name']),
+                                subtitle: Text('\$${data['amount']}'),
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () {
+                                    document.reference.delete();
+                                  },
+                                ),
+                              );
+                            }).toList() ?? [],
+                            
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                  
+                ),
+                
+              ) 
               
-            ),
+            ],
             
-          ) 
-          
-        ],
-        
-        
+            
+          ),
       ),
       floatingActionButton: Container(
         height: 80.0,
@@ -256,14 +292,14 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(),
+        shape: const CircularNotchedRectangle(),
         notchMargin: 30.0,
         child: Row(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             IconButton(
-              icon: Icon(Icons.receipt),
+              icon: Icon(Icons.receipt, size: 40,),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -272,7 +308,7 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             IconButton(
-              icon: Icon(Icons.bar_chart),
+              icon: Icon(Icons.bar_chart, size: 40,),
               onPressed: () {
                 print("Button pushed!");
                 Navigator.push(
@@ -439,5 +475,21 @@ class _MyHomePageState extends State<MyHomePage> {
     );
 
   }
+
+  void resetUserData() {
+  // Delete all documents in 'income' collection
+  FirebaseFirestore.instance.collection('users').doc(uid).collection('income').get().then((snapshot) {
+    for (DocumentSnapshot doc in snapshot.docs) {
+      doc.reference.delete();
+    }
+  });
+
+  // Delete all documents in 'expense' collection
+  FirebaseFirestore.instance.collection('users').doc(uid).collection('expense').get().then((snapshot) {
+    for (DocumentSnapshot doc in snapshot.docs) {
+      doc.reference.delete();
+    }
+  });
+}
 }
 
